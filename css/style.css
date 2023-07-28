@@ -1,1 +1,53 @@
+.container {
+  display: flex;
+  justify-content: center;
+}
 
+.calculator {
+  width: 364px;
+  height: 634px;
+  border-radius: 40px;
+  background-color: black;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.calculator > :last-child {
+  margin-bottom: 30px;
+}
+
+#screen {
+  width: 320px;
+  height: 145px;
+  border-radius: 30px;
+  background-color: white;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  width: 75px;
+  height: 73px;
+  border-radius: 40px;
+  border-style: none;
+}
+
+.calculator > :nth-child(18) {
+  width: 156px;
+  height: 74px;
+}
+
+.extra {
+  background-color: #989898;
+}
+
+.operator {
+  background-color: #e88e25;
+}
+
+.numbers {
+  background-color: #414141;
+}
