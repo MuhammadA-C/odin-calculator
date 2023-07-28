@@ -1,6 +1,7 @@
 .container {
   display: flex;
   justify-content: center;
+  margin-top: 5rem;
 }
 
 .calculator {
@@ -44,10 +45,15 @@ button {
   background-color: #989898;
 }
 
-.operator {
+.equals-operator,
+.operators {
   background-color: #e88e25;
 }
 
 .numbers {
   background-color: #414141;
+}
+
+.btn-hover-effect:hover {
+  background-color: #ffffff;
 }
