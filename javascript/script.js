@@ -1,5 +1,8 @@
 /*
 
+Note: There's a bug after you click the plus sign twice
+with the numbers printing to the screen. Need to fix!
+
 
 */
 
@@ -28,8 +31,20 @@ for (let i = 0; i < numbers.length; i++) {
     console.log(numbers[i].lastChild);
 
     if(totalNumbers <= maxNumbersOnScreen) {
-      screen.textContent += numbers[i].lastChild.nodeValue;
-      totalNumbers++;
+
+      switch(operatorSelected) {
+        case true:
+          screen.textContent = "";
+          totalNumbers = 0;
+          operatorSelected = false;
+          screen.textContent += numbers[i].lastChild.nodeValue;
+          break;
+        case false:
+          screen.textContent += numbers[i].lastChild.nodeValue;
+          totalNumbers++;
+          break;
+      }
+
     }
   });
 }
@@ -39,16 +54,37 @@ clearBtn.addEventListener("click", () => {
 });
 
 
+let num1 = null;
+let num2 = null;
+let operatorSelected = false;
 
 
-let num1;
-let num2;
-let operatorSelectedl
+additionBtn.addEventListener("click", () => {
+  if(num1 === null) {
+    num1 = screen.textContent;
+    operatorSelected = true;
+    console.log("Addition: " + num1);
+  } else if (num2 === null) {
+    num2 = screen.textContent;
+    operatorSelected = true;
+    console.log("Addition: " + num2);
+  }
+
+  if(num1 != null && num2 != null) {
+    screen.textContent = add(num1, num2);
+    num1 = null;
+    num2 = null;
+    operatorSelected = null;
+  }
+});
+
+
+
 
 function operate() {}
 
 function add(num1, num2) {
-  return num1 + num2;
+  return Number(num1) + Number(num2);
 }
 
 function subtract(num1, num2) {
@@ -66,4 +102,7 @@ function divide(num1, num2) {
 function clear() {
   screen.textContent = "";
   totalNumbers = 0;
+  operatorSelected = false;
+  num1 = null;
+  num2 = null;
 }
