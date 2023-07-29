@@ -15,71 +15,115 @@ const subtractBtn = document.querySelector("button:nth-child(13)");
 const additionBtn = document.querySelector("button:nth-child(17)");
 const equalsBtn = document.querySelector("button:nth-child(20)");
 
-const maxNumbersOnScreen = 9;
-let totalNumbers = 0;
+///////////////////////////////////////////////////////////////////////////
 
+const screenLength = 9;
+let numbersOnScreen = 0;
 
-
-
-
-/*
-  Adds the number selected to the screen if its less than
-  or equal to the max numbers allowed on the screen.
+//////////////////////////////////////////////////////////////////////////
+/* 
+  Adds an event listner to each of the numbered buttons
+  to obtain the button that was pressed and update the screen.
 */
 for (let i = 0; i < numbers.length; i++) {
   numbers[i].addEventListener("click", () => {
-    console.log(numbers[i].lastChild);
-
-    if(totalNumbers <= maxNumbersOnScreen) {
-
-      switch(operatorSelected) {
-        case true:
-          screen.textContent = "";
-          totalNumbers = 0;
-          operatorSelected = false;
-          screen.textContent += numbers[i].lastChild.nodeValue;
-          break;
-        case false:
-          screen.textContent += numbers[i].lastChild.nodeValue;
-          totalNumbers++;
-          break;
-      }
-
-    }
+    updateScreen(i);
+    printBtnPressed(i);
   });
 }
+
+///////////////////////////////////////////////////////////////////////////
+
+let selectedNumOne = null;
+let selectedNumTwo = null;
+let wasOperationSelected = false;
+
+//////////////////////////////////////////////////////////////////////////
+additionBtn.addEventListener("click", () => {
+
+
+  if(selectedNumOne === null) {
+    setWasOperationSelected();
+    selectedNumOne = screen.textContent;
+
+  } else if (selectedNumTwo === null) {
+    setWasOperationSelected();
+    selectedNumTwo = screen.textContent;
+  }
+
+  if(selectedNumOne != null && selectedNumTwo != null) {
+    screen.textContent = add(selectedNumOne, selectedNumTwo);
+
+    resetSelectedNums();
+    resetWasOperationSelected();
+  }
+
+
+});
 
 clearBtn.addEventListener("click", () => {
   clear();
 });
 
+//////////////////////////////////////////////////////////////////////////
 
-let num1 = null;
-let num2 = null;
-let operatorSelected = false;
+function updateScreen(index) {
+  if(numbersOnScreen < screenLength) {
+    switch(wasOperationSelected) {
+      case true:
+        resetNumbersOnScreen();
+        resetWasOperationSelected();
+        resetScreen();
+        setScreen(index);
+        break;
 
+      case false:
+        setScreen(index);
+        numbersOnScreen++;
+        break;
+    }
+  } 
+}
 
-additionBtn.addEventListener("click", () => {
-  if(num1 === null) {
-    num1 = screen.textContent;
-    operatorSelected = true;
-    console.log("Addition: " + num1);
-  } else if (num2 === null) {
-    num2 = screen.textContent;
-    operatorSelected = true;
-    console.log("Addition: " + num2);
-  }
+function setScreen(index) {
+  screen.textContent += numbers[index].lastChild.nodeValue;
+}
 
-  if(num1 != null && num2 != null) {
-    screen.textContent = add(num1, num2);
-    num1 = null;
-    num2 = null;
-    operatorSelected = null;
-  }
-});
+function resetScreen() {
+  screen.textContent = "";
+}
 
+function resetNumbersOnScreen() {
+  numbersOnScreen = 0;
+}
 
+function resetWasOperationSelected() {
+  wasOperationSelected = false;
+}
 
+function setWasOperationSelected() {
+  wasOperationSelected = true;
+}
+
+function resetSelectedNums() {
+  selectedNumOne = null;
+  selectedNumTwo = null;
+}
+
+function clear() {
+  resetScreen();
+  resetNumbersOnScreen();
+  resetSelectedNums();
+  resetWasOperationSelected();
+
+  console.log("Clear");
+}
+
+function printBtnPressed(index) {
+  console.log(numbers[index].lastChild);
+}
+
+//////////////////////////////////////////////////////////////////////
 
 function operate() {}
 
@@ -97,12 +141,4 @@ function multiply(num1, num2) {
 
 function divide(num1, num2) {
   return num1 / num2;
-}
-
-function clear() {
-  screen.textContent = "";
-  totalNumbers = 0;
-  operatorSelected = false;
-  num1 = null;
-  num2 = null;
 }
