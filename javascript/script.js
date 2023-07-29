@@ -1,8 +1,5 @@
 /*
 
-Note: There's a bug after you click the plus sign twice
-with the numbers printing to the screen. Need to fix!
-
 
 */
 
@@ -37,25 +34,60 @@ for (let i = 0; i < numbers.length; i++) {
 let selectedNumOne = null;
 let selectedNumTwo = null;
 let wasOperationSelected = false;
+let isChainOperations = false;
+let num = null;
 
 //////////////////////////////////////////////////////////////////////////
 additionBtn.addEventListener("click", () => {
-
-
+  //Stores the two numbers into variables
   if(selectedNumOne === null) {
     setWasOperationSelected();
     selectedNumOne = screen.textContent;
 
   } else if (selectedNumTwo === null) {
     setWasOperationSelected();
-    selectedNumTwo = screen.textContent;
+
+    /*
+    Bug: Due to the code below it causes a bug where
+    if this is triggered then the user keeps pressing the operator
+    it'll have the last number stored and do calculations with it
+    */
+    if(isChainOperations) {
+      selectedNumTwo = num;
+    } else {
+      selectedNumTwo = screen.textContent;
+    }
+
   }
 
-  if(selectedNumOne != null && selectedNumTwo != null) {
-    screen.textContent = add(selectedNumOne, selectedNumTwo);
+  /* 
+    Code below is also updating the screen....
+    It's updating the screen with the result
 
-    resetSelectedNums();
-    resetWasOperationSelected();
+  */
+
+    /*
+      Bug-1: The screen doesn't update correctly after the chain code
+      running
+
+      Bug-2: The chain code doesn't work correctly because it only stores
+      the last instance of the button pressed and not all passed 
+      instances prior to an operator being selected.
+
+
+    */
+  if(selectedNumOne != null && selectedNumTwo != null && isChainOperations === false) {
+    selectedNumOne = add(selectedNumOne, selectedNumTwo);
+    screen.textContent = selectedNumOne;
+    selectedNumTwo = null;
+    isChainOperations = true;
+  }
+
+  if(selectedNumOne != null && selectedNumTwo != null && isChainOperations === true) {
+    selectedNumOne = add(selectedNumOne, selectedNumTwo);
+    screen.textContent = selectedNumOne;
+    selectedNumTwo = null;
+    isChainOperations = true;
   }
 
 
@@ -68,24 +100,33 @@ clearBtn.addEventListener("click", () => {
 //////////////////////////////////////////////////////////////////////////
 
 function updateScreen(index) {
-  if(numbersOnScreen < screenLength) {
-    switch(wasOperationSelected) {
-      case true:
-        resetNumbersOnScreen();
-        resetWasOperationSelected();
-        resetScreen();
-        setScreen(index);
-        break;
+  //Stops the screen from updating if the number is too long
+  if(numbersOnScreen >= screenLength) {
+    return;
+  }
 
-      case false:
-        setScreen(index);
-        numbersOnScreen++;
-        break;
-    }
-  } 
+  if(!wasOperationSelected && !isChainOperations) {
+    updateScreenBasedOnBtnPressed(index);
+  } else if(wasOperationSelected && !isChainOperations) {
+    updateScreenIfOperationWasSelected(index);
+  } else if(isChainOperations) {
+    num = numbers[index].lastChild.nodeValue;
+  }
 }
 
-function setScreen(index) {
+function updateScreenBasedOnBtnPressed(index) {
+  setScreenBasedOnBtnPressed(index);
+  numbersOnScreen++;
+}
+
+function updateScreenIfOperationWasSelected(index) {
+  resetNumbersOnScreen();
+  resetWasOperationSelected();
+  resetScreen();
+  setScreenBasedOnBtnPressed(index);
+}
+
+function setScreenBasedOnBtnPressed(index) {
   screen.textContent += numbers[index].lastChild.nodeValue;
 }
 
@@ -105,16 +146,18 @@ function setWasOperationSelected() {
   wasOperationSelected = true;
 }
 
-function resetSelectedNums() {
+function resetNums() {
   selectedNumOne = null;
   selectedNumTwo = null;
+  num = null;
 }
 
 function clear() {
   resetScreen();
   resetNumbersOnScreen();
-  resetSelectedNums();
   resetWasOperationSelected();
+  resetNums();
+  isChainOperations = false;
 
   console.log("Clear");
 }
